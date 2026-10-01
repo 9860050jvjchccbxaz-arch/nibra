@@ -2,499 +2,511 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>3D Desert Runner</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>نِبرا | NIBRA - زخرفة وتوليد الألقاب والبايو</title>
     <style>
+        :root {
+            --bg-color: #0f172a;
+            --card-bg: #1e293b;
+            --text-color: #f8fafc;
+            --text-muted: #94a3b8;
+            --accent: #6366f1;
+            --accent-hover: #4f46e5;
+            --danger: #ef4444;
+            --danger-hover: #dc2626;
+            --success: #22c55e;
+            --border: #334155;
+        }
+
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
-            user-select: none;
-            -webkit-user-select: none;
+            font-family: system-ui, -apple-system, sans-serif;
         }
-        body, html {
-            width: 100%;
-            height: 100%;
-            overflow: hidden;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: #2c1a1d;
-        }
-        #game-container {
-            width: 100%;
-            height: 100%;
-            position: relative;
-        }
-        #ui-layer {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            min-height: 100vh;
             display: flex;
             flex-direction: column;
+        }
+
+        header {
+            display: flex;
             justify-content: space-between;
-            padding: 20px;
-            z-index: 10;
+            align-items: center;
+            padding: 20px 5%;
+            background-color: var(--card-bg);
+            border-bottom: 1px solid var(--border);
+            position: sticky;
+            top: 0;
+            z-index: 100;
         }
-        .scoreboard {
-            color: #ffffff;
-            font-size: 20px;
+
+        .logo {
+            font-size: 1.5rem;
             font-weight: 800;
-            text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.7);
+            color: var(--accent);
+            letter-spacing: 1px;
+        }
+
+        .menu-btn {
+            background: none;
+            border: none;
+            color: var(--text-color);
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 5px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 30px auto;
+            padding: 0 20px;
+            width: 100%;
+            flex: 1;
+        }
+
+        .search-box {
+            width: 100%;
+            padding: 15px 20px;
+            font-size: 1rem;
+            background-color: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            color: var(--text-color);
+            outline: none;
+            transition: border-color 0.3s;
+            margin-bottom: 25px;
+        }
+
+        .search-box:focus {
+            border-color: var(--accent);
+        }
+
+        /* عنوان القسم */
+        .section-title {
+            font-size: 1.1rem;
+            color: var(--text-muted);
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+
+        .grid {
+            display: grid;
+            gap: 15px;
+        }
+
+        .card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 20px;
             display: flex;
-            flex-direction: column;
-            gap: 5px;
+            justify-content: space-between;
+            align-items: center;
+            transition: transform 0.2s;
         }
-        .score-box {
-            background: rgba(0, 0, 0, 0.4);
-            padding: 8px 16px;
-            border-radius: 20px;
-            width: fit-content;
-            backdrop-filter: blur(4px);
+
+        .card:hover {
+            border-color: var(--accent);
         }
-        .score-val {
-            color: #FFD700;
+
+        .card-text {
+            font-size: 1.1rem;
+            word-break: break-all;
+            flex: 1;
+            margin-left: 15px;
         }
-        #game-over-screen {
-            position: absolute;
+
+        .actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        button.action-btn {
+            background-color: var(--accent);
+            color: white;
+            border: none;
+            padding: 8px 14px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 600;
+            transition: background-color 0.2s;
+        }
+
+        button.action-btn:hover {
+            background-color: var(--accent-hover);
+        }
+
+        button.save-btn {
+            background-color: transparent;
+            border: 1px solid var(--border);
+            color: var(--text-muted);
+        }
+
+        button.save-btn.saved {
+            color: var(--success);
+            border-color: var(--success);
+        }
+
+        /* القائمة الجانبية (Drawer) */
+        .drawer-overlay {
+            position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(20, 10, 15, 0.85);
+            background-color: rgba(0, 0, 0, 0.6);
+            display: none;
+            z-index: 200;
+        }
+
+        .drawer {
+            position: fixed;
+            top: 0;
+            right: -350px;
+            width: 350px;
+            height: 100%;
+            background-color: var(--card-bg);
+            border-left: 1px solid var(--border);
+            z-index: 300;
+            transition: right 0.3s ease;
             display: flex;
             flex-direction: column;
+            padding: 20px;
+        }
+
+        .drawer.open {
+            right: 0;
+        }
+
+        .drawer-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 10px;
+        }
+
+        .close-drawer {
+            background: none;
+            border: none;
+            color: var(--text-color);
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
+        .drawer-body {
+            flex: 1;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .saved-item {
+            background-color: var(--bg-color);
+            padding: 12px;
+            border-radius: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border: 1px solid var(--border);
+        }
+
+        .delete-btn {
+            background-color: var(--danger);
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.8rem;
+        }
+        .delete-btn:hover {
+            background-color: var(--danger-hover);
+        }
+
+        /* نافذة تأكيد الحذف المنبثقة (Modal) */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            display: none;
             justify-content: center;
             align-items: center;
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.4s ease;
-            z-index: 20;
+            z-index: 400;
         }
-        #game-over-screen.active {
-            opacity: 1;
-            pointer-events: auto;
+
+        .modal-box {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border);
+            padding: 25px;
+            border-radius: 16px;
+            width: 90%;
+            max-width: 320px;
+            text-align: center;
         }
-        #game-over-screen h1 {
-            color: #FF4500;
-            font-size: 42px;
-            margin-bottom: 10px;
-            text-shadow: 0 0 15px rgba(255, 69, 0, 0.6);
+
+        .modal-box p {
+            margin-bottom: 20px;
+            font-size: 1.05rem;
         }
-        #game-over-screen p {
-            color: #ffffff;
-            font-size: 22px;
-            margin-bottom: 10px;
+
+        .modal-actions {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
         }
-        .restart-btn {
-            background: linear-gradient(45deg, #FF8C00, #FFD700);
-            color: #111;
-            border: none;
-            padding: 16px 45px;
-            font-size: 24px;
-            font-weight: 900;
-            border-radius: 40px;
+
+        .modal-btn {
+            padding: 8px 18px;
+            border-radius: 8px;
             cursor: pointer;
-            box-shadow: 0 6px 20px rgba(255, 140, 0, 0.5);
-            margin-top: 20px;
-            transition: transform 0.1s ease;
+            font-weight: 600;
+            border: none;
         }
-        .restart-btn:active {
-            transform: scale(0.92);
+
+        .btn-confirm {
+            background-color: var(--danger);
+            color: white;
+        }
+
+        .btn-cancel {
+            background-color: transparent;
+            border: 1px solid var(--border);
+            color: var(--text-color);
+        }
+
+        footer {
+            text-align: center;
+            padding: 20px;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            border-top: 1px solid var(--border);
+            background-color: var(--card-bg);
+        }
+
+        .no-results {
+            text-align: center;
+            color: var(--text-muted);
+            padding: 40px;
         }
     </style>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 </head>
 <body>
 
-    <div id="game-container">
-        <div id="ui-layer">
-            <div class="scoreboard">
-                <div class="score-box">النقاط: <span id="current-score" class="score-val">0</span></div>
-                <div class="score-box">الذهب: 🟡 <span id="coins-count" class="score-val">0</span></div>
-            </div>
-        </div>
+    <header>
+        <div class="logo">NIBRA | نِبرا</div>
+        <button class="menu-btn" id="menuBtn" aria-label="القائمة الجانبية">☰</button>
+    </header>
 
-        <div id="game-over-screen">
-            <h1>انتهت اللعبة!</h1>
-            <p>النتيجة: <span id="final-score" class="score-val">0</span></p>
-            <p>العملات: 🟡 <span id="final-coins" class="score-val">0</span></p>
-            <button class="restart-btn" id="restart-btn">إعادة اللعب</button>
+    <div class="container">
+        <input type="text" id="searchInput" class="search-box" placeholder="اكتب اسمك (مثال: Vivora) لتوليد ألقاب وزخارف..." maxlength="50">
+        
+        <div class="section-title" id="sectionTitle">أسماء نقترحها عليك:</div>
+        <div class="grid" id="itemsGrid"></div>
+    </div>
+
+    <!-- القائمة الجانبية للمفضلة -->
+    <div class="drawer-overlay" id="drawerOverlay"></div>
+    <div class="drawer" id="drawer">
+        <div class="drawer-header">
+            <h3>الأسماء المحفوظة</h3>
+            <button class="close-drawer" id="closeDrawer">&times;</button>
+        </div>
+        <div class="drawer-body" id="savedItemsContainer"></div>
+    </div>
+
+    <!-- نافذة تأكيد الحذف -->
+    <div class="modal-overlay" id="deleteModal">
+        <div class="modal-box">
+            <p>هل أنت متأكد من حذف هذا الاسم من قائمة المحفوظات؟</p>
+            <div class="modal-actions">
+                <button class="modal-btn btn-confirm" id="confirmDeleteBtn">نعم، حذف</button>
+                <button class="modal-btn btn-cancel" id="cancelDeleteBtn">إلغاء</button>
+            </div>
         </div>
     </div>
 
+    <footer>
+        جميع الحقوق محفوظة © نِبرا 2026
+    </footer>
+
     <script>
-        let scene, camera, renderer;
-        let playerGroup, leftArm, rightArm, leftLeg, rightLeg;
-        let obstacles = [], coins = [], scenery = [];
+        const defaultItems = [
+            { id: 'd1', text: "꧁༺ جُوكَر ༻꧂" },
+            { id: 'd2', text: "الأسطورة ⚡ VIP" },
+            { id: 'd3', text: "مُحارب قديم ⚔️ لا تهاب الموت" },
+            { id: 'd4', text: "♜ كبرياء هادئ ♜" },
+            { id: 'd5', text: "حوت الألعاب 🎮 Gaming Legend" },
+            { id: 'd6', text: "غارق في تفاصيل صمتي 🖤" }
+        ];
 
-        let score = 0, collectedCoins = 0;
-        let isGameOver = false;
-        let gameSpeed = 0.8;
-        let frameCount = 0;
+        let savedItems = JSON.parse(localStorage.getItem('nibra_saved')) || [];
+        let itemToDeleteId = null; // تخزين مؤقت للاسم المراد حذفه
 
-        const lanes = [-2.6, 0, 2.6];
-        let currentLane = 1;
-        let targetX = lanes[currentLane];
-
-        let isJumping = false;
-        let jumpVelocity = 0;
-        const gravity = -0.022;
-
-        let touchStartX = 0, touchStartY = 0;
-
-        function init() {
-            const container = document.getElementById('game-container');
-
-            scene = new THREE.Scene();
-            scene.background = new THREE.Color(0xFFA07A);
-            scene.fog = new THREE.FogExp2(0xE9967A, 0.008);
-
-            camera = new THREE.PerspectiveCamera(65, window.innerWidth / window.innerHeight, 0.1, 1000);
-            camera.position.set(0, 5.5, 11);
-            camera.rotation.x = -0.28;
-
-            renderer = new THREE.WebGLRenderer({ antialias: true });
-            renderer.setSize(window.innerWidth, window.innerHeight);
-            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-            renderer.shadowMap.enabled = true;
-            container.appendChild(renderer.domElement);
-
-            const ambientLight = new THREE.AmbientLight(0xffd1a4, 0.9);
-            scene.add(ambientLight);
-
-            const dirLight = new THREE.DirectionalLight(0xffaa55, 1.2);
-            dirLight.position.set(20, 40, 20);
-            dirLight.castShadow = true;
-            scene.add(dirLight);
-
-            createEnvironment();
-            createPlayer();
-
-            window.addEventListener('resize', onWindowResize);
-            setupControls();
-
-            document.getElementById('restart-btn').addEventListener('click', restartGame);
-
-            animate();
+        function escapeHTML(str) {
+            return str.replace(/[&<>'"]/g, 
+                tag => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[tag] || tag)
+            );
         }
 
-        function createEnvironment() {
-            const groundGeo = new THREE.PlaneGeometry(100, 400);
-            const groundMat = new THREE.MeshStandardMaterial({ color: 0xE28B59, roughness: 0.9 });
-            const ground = new THREE.Mesh(groundGeo, groundMat);
-            ground.rotation.x = -Math.PI / 2;
-            ground.position.set(0, -0.05, -150);
-            scene.add(ground);
+        const itemsGrid = document.getElementById('itemsGrid');
+        const sectionTitle = document.getElementById('sectionTitle');
 
-            for (let lane of lanes) {
-                for (let side of [-0.6, 0.6]) {
-                    const railGeo = new THREE.BoxGeometry(0.1, 0.15, 400);
-                    const railMat = new THREE.MeshStandardMaterial({ color: 0x555555, metalness: 0.5 });
-                    const rail = new THREE.Mesh(railGeo, railMat);
-                    rail.position.set(lane + side, 0.05, -150);
-                    scene.add(rail);
-                }
-                
-                for (let z = 10; z > -350; z -= 3) {
-                    const tieGeo = new THREE.BoxGeometry(1.5, 0.08, 0.4);
-                    const tieMat = new THREE.MeshStandardMaterial({ color: 0x422A1D });
-                    const tie = new THREE.Mesh(tieGeo, tieMat);
-                    tie.position.set(lane, 0.04, z);
-                    scene.add(tie);
-                }
-            }
+        function renderContent(query = "") {
+            const cleanQuery = query.trim();
+            let displayList = [];
 
-            for (let i = -5; i <= 5; i++) {
-                const mountainGeo = new THREE.ConeGeometry(15 + Math.random() * 10, 30 + Math.random() * 20, 5);
-                const mountainMat = new THREE.MeshStandardMaterial({ color: 0xB85C37, flatShading: true });
-                const mountain = new THREE.Mesh(mountainGeo, mountainMat);
-                mountain.position.set(i * 30, 10, -220);
-                scene.add(mountain);
-            }
-        }
-        function createPlayer() {
-            playerGroup = new THREE.Group();
-
-            const shirtMat = new THREE.MeshStandardMaterial({ color: 0x00A86B, roughness: 0.4 });
-            const skinMat = new THREE.MeshStandardMaterial({ color: 0x8D5524 });
-            const shortsMat = new THREE.MeshStandardMaterial({ color: 0xB22222 });
-
-            const headGeo = new THREE.BoxGeometry(0.5, 0.5, 0.5);
-            const head = new THREE.Mesh(headGeo, skinMat);
-            head.position.y = 1.6;
-            playerGroup.add(head);
-
-            const hairGeo = new THREE.BoxGeometry(0.54, 0.2, 0.54);
-            const hairMat = new THREE.MeshStandardMaterial({ color: 0x111111 });
-            const hair = new THREE.Mesh(hairGeo, hairMat);
-            hair.position.y = 1.88;
-            playerGroup.add(hair);
-
-            const bodyGeo = new THREE.BoxGeometry(0.6, 0.7, 0.35);
-            const body = new THREE.Mesh(bodyGeo, shirtMat);
-            body.position.y = 1.0;
-            playerGroup.add(body);
-
-            const shortsGeo = new THREE.BoxGeometry(0.62, 0.3, 0.37);
-            const shorts = new THREE.Mesh(shortsGeo, shortsMat);
-            shorts.position.y = 0.55;
-            playerGroup.add(shorts);
-
-            const limbGeo = new THREE.BoxGeometry(0.18, 0.5, 0.18);
-            leftArm = new THREE.Mesh(limbGeo, skinMat);
-            leftArm.position.set(-0.42, 0.95, 0);
-            rightArm = leftArm.clone();
-            rightArm.position.set(0.42, 0.95, 0);
-            playerGroup.add(leftArm);
-            playerGroup.add(rightArm);
-
-            leftLeg = new THREE.Mesh(limbGeo, skinMat);
-            leftLeg.position.set(-0.18, 0.25, 0);
-            rightLeg = leftLeg.clone();
-            rightLeg.position.set(0.18, 0.25, 0);
-            playerGroup.add(leftLeg);
-            playerGroup.add(rightLeg);
-
-            playerGroup.position.set(lanes[currentLane], 0, 0);
-            scene.add(playerGroup);
-        }
-
-        function spawnObstacle() {
-            const laneIndex = Math.floor(Math.random() * 3);
-            const xPos = lanes[laneIndex];
-            const rand = Math.random();
-
-            let obs = new THREE.Group();
-
-            if (rand < 0.5) {
-                const trainGeo = new THREE.BoxGeometry(2.2, 2.8, 6);
-                const trainMat = new THREE.MeshStandardMaterial({ color: 0x8B0000, roughness: 0.6 });
-                const train = new THREE.Mesh(trainGeo, trainMat);
-                train.position.y = 1.4;
-
-                const roofGeo = new THREE.BoxGeometry(2.3, 0.3, 6.1);
-                const roofMat = new THREE.MeshStandardMaterial({ color: 0x222222 });
-                const roof = new THREE.Mesh(roofGeo, roofMat);
-                roof.position.y = 2.85;
-
-                obs.add(train);
-                obs.add(roof);
+            if (cleanQuery === "") {
+                sectionTitle.innerText = "أسماء نقترحها عليك:";
+                displayList = defaultItems;
             } else {
-                const crateGeo = new THREE.BoxGeometry(2.0, 1.3, 1.8);
-                const crateMat = new THREE.MeshStandardMaterial({ color: 0xCD853F, roughness: 0.8 });
-                const crate = new THREE.Mesh(crateGeo, crateMat);
-                crate.position.y = 0.65;
-                obs.add(crate);
+                sectionTitle.innerText = `نتائج وتوليد زخارف لـ: "${escapeHTML(cleanQuery)}"`;
+                // توليد 6-7 أشكال وألقاب فورية بناءً على الكلمة المدخلة (مثل Vivora)
+                displayList = [
+                    { id: 'gen_1', text: `꧁༺ ${cleanQuery} ༻꧂` },
+                    { id: 'gen_2', text: `⚡ ${cleanQuery} ⚡ VIP` },
+                    { id: 'gen_3', text: `♜ ${cleanQuery} ♜` },
+                    { id: 'gen_4', text: `🔥 ${cleanQuery} Gaming` },
+                    { id: 'gen_5', text: `✨ ${cleanQuery} ✨` },
+                    { id: 'gen_6', text: `★彡 ${cleanQuery} 彡★` },
+                    { id: 'gen_7', text: `🖤 ${cleanQuery} 🖤` }
+                ];
             }
 
-            obs.position.set(xPos, 0, -140);
-            scene.add(obs);
-            obstacles.push(obs);
-
-            spawnCoins(laneIndex);
+            itemsGrid.innerHTML = displayList.map(item => {
+                // التحقق هل العنصر محفوظ مسبقاً (بناءً على نص العنصر أو هويته)
+                const isSaved = savedItems.some(s => s.text === item.text);
+                // تمرير النص بشكل آمن للدوال
+                const safeTextJson = JSON.stringify(item.text);
+                
+                return `
+                    <div class="card">
+                        <div class="card-text">${escapeHTML(item.text)}</div>
+                        <div class="actions">
+                            <button class="action-btn save-btn ${isSaved ? 'saved' : ''}" onclick='toggleSave(${safeTextJson})'>
+                                ${isSaved ? '⭐ محفوظة' : '☆ حفظ'}
+                            </button>
+                            <button class="action-btn" onclick='copyText(this, ${safeTextJson})'>نسخ</button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
         }
 
-        function spawnCoins(obsLane) {
-            let coinLane = (obsLane + Math.floor(Math.random() * 2) + 1) % 3;
-            const coinGeo = new THREE.CylinderGeometry(0.4, 0.4, 0.1, 16);
-            const coinMat = new THREE.MeshStandardMaterial({ color: 0xFFD700, metalness: 0.8, roughness: 0.2 });
-
-            for (let i = 0; i < 4; i++) {
-                const coin = new THREE.Mesh(coinGeo, coinMat);
-                coin.rotation.x = Math.PI / 2;
-                coin.position.set(lanes[coinLane], 0.8, -130 - (i * 3.5));
-                scene.add(coin);
-                coins.push(coin);
-            }
-        }
-
-        function spawnScenery() {
-            const side = Math.random() > 0.5 ? 1 : -1;
-            const xPos = side * (8 + Math.random() * 6);
-
-            const cactusGroup = new THREE.Group();
-            const mainMat = new THREE.MeshStandardMaterial({ color: 0x2E8B57, roughness: 0.7 });
-
-            const stemGeo = new THREE.CylinderGeometry(0.3, 0.3, 3, 8);
-            const stem = new THREE.Mesh(stemGeo, mainMat);
-            stem.position.y = 1.5;
-            cactusGroup.add(stem);
-
-            const armGeo = new THREE.CylinderGeometry(0.2, 0.2, 1.2, 8);
-            const arm1 = new THREE.Mesh(armGeo, mainMat);
-            arm1.rotation.z = Math.PI / 2;
-            arm1.position.set(0.5, 1.8, 0);
-            cactusGroup.add(arm1);
-
-            cactusGroup.position.set(xPos, 0, -140);
-            scene.add(cactusGroup);
-            scenery.push(cactusGroup);
-        }
-
-        function setupControls() {
-            window.addEventListener('touchstart', (e) => {
-                touchStartX = e.touches[0].clientX;
-                touchStartY = e.touches[0].clientY;
-            }, { passive: true });
-
-            window.addEventListener('touchend', (e) => {
-                if (isGameOver) return;
-                let diffX = e.changedTouches[0].clientX - touchStartX;
-                let diffY = e.changedTouches[0].clientY - touchStartY;
-
-                if (Math.abs(diffX) > Math.abs(diffY)) {
-                    if (diffX > 30 && currentLane < 2) currentLane++;
-                    else if (diffX < -30 && currentLane > 0) currentLane--;
-                    targetX = lanes[currentLane];
-                } else {
-                    if (diffY < -30 && !isJumping) {
-                        isJumping = true;
-                        jumpVelocity = 0.4;
-                    }
-                }
-            }, { passive: true });
-
-            window.addEventListener('keydown', (e) => {
-                if (isGameOver) return;
-                if (e.key === 'ArrowLeft' && currentLane > 0) currentLane--;
-                if (e.key === 'ArrowRight' && currentLane < 2) currentLane++;
-                if (e.key === 'ArrowUp' && !isJumping) {
-                    isJumping = true;
-                    jumpVelocity = 0.4;
-                }
-                targetX = lanes[currentLane];
+        function copyText(btn, text) {
+            navigator.clipboard.writeText(text).then(() => {
+                const originalText = btn.innerText;
+                btn.innerText = "تم النسخ ✓";
+                btn.style.backgroundColor = "var(--success)";
+                setTimeout(() => {
+                    btn.innerText = originalText;
+                    btn.style.backgroundColor = "";
+                }, 1500);
             });
         }
 
-        function updatePlayer() {
-            playerGroup.position.x += (targetX - playerGroup.position.x) * 0.25;
-
-            if (isJumping) {
-                playerGroup.position.y += jumpVelocity;
-                jumpVelocity += gravity;
-
-                if (playerGroup.position.y <= 0) {
-                    playerGroup.position.y = 0;
-                    isJumping = false;
-                }
+        function toggleSave(text) {
+            const existingIndex = savedItems.findIndex(s => s.text === text);
+            if (existingIndex > -1) {
+                savedItems.splice(existingIndex, 1);
+            } else {
+                savedItems.push({ id: 's_' + Date.now() + Math.random(), text: text });
             }
 
-            if (!isGameOver) {
-                const time = Date.now() * 0.018;
-                const swing = Math.sin(time) * 0.7;
-                leftArm.rotation.x = swing;
-                rightArm.rotation.x = -swing;
-                leftLeg.rotation.x = -swing;
-                rightLeg.rotation.x = swing;
-            }
+            localStorage.setItem('nibra_saved', JSON.stringify(savedItems));
+            renderContent(document.getElementById('searchInput').value);
+            renderSavedDrawer();
         }
 
-        function updateWorld() {
-            frameCount++;
+        // إدارة القائمة الجانبية
+        const menuBtn = document.getElementById('menuBtn');
+        const drawer = document.getElementById('drawer');
+        const drawerOverlay = document.getElementById('drawerOverlay');
+        const closeDrawer = document.getElementById('closeDrawer');
+        const savedItemsContainer = document.getElementById('savedItemsContainer');
 
-            if (frameCount % Math.max(25, Math.floor(60 - gameSpeed * 15)) === 0) spawnObstacle();
-            if (frameCount % 10 === 0) spawnScenery();
+        menuBtn.addEventListener('click', () => {
+            drawer.classList.add('open');
+            drawerOverlay.style.display = 'block';
+            renderSavedDrawer();
+        });
 
-            for (let i = obstacles.length - 1; i >= 0; i--) {
-                let obs = obstacles[i];
-                obs.position.z += gameSpeed;
+        function closeDrawerFunc() {
+            drawer.classList.remove('open');
+            drawerOverlay.style.display = 'none';
+        }
 
-                if (checkCollision(playerGroup, obs)) {
-                    triggerGameOver();
-                }
+        closeDrawer.addEventListener('click', closeDrawerFunc);
+        drawerOverlay.addEventListener('click', closeDrawerFunc);
 
-                if (obs.position.z > 15) {
-                    scene.remove(obs);
-                    obstacles.splice(i, 1);
-                }
-            }
-
-            for (let i = coins.length - 1; i >= 0; i--) {
-                let coin = coins[i];
-                coin.position.z += gameSpeed;
-                coin.rotation.z += 0.05;
-
-                if (checkCoinCollect(playerGroup, coin)) {
-                    collectedCoins++;
-                    document.getElementById('coins-count').innerText = collectedCoins;
-                    scene.remove(coin);
-                    coins.splice(i, 1);
-                    continue;
-                }
-
-                if (coin.position.z > 15) {
-                    scene.remove(coin);
-                    coins.splice(i, 1);
-                }
+        function renderSavedDrawer() {
+            if (savedItems.length === 0) {
+                savedItemsContainer.innerHTML = `<div class="no-results" style="font-size:0.9rem;">لا توجد أسماء محفوظة بعد.</div>`;
+                return;
             }
 
-            for (let i = scenery.length - 1; i >= 0; i--) {
-                scenery[i].position.z += gameSpeed;
-                if (scenery[i].position.z > 15) {
-                    scene.remove(scenery[i]);
-                    scenery.splice(i, 1);
-                }
+            savedItemsContainer.innerHTML = savedItems.map(item => {
+                const safeTextJson = JSON.stringify(item.text);
+                return `
+                    <div class="saved-item">
+                        <span style="font-size: 0.95rem; word-break: break-all;">${escapeHTML(item.text)}</span>
+                        <div style="display: flex; gap: 5px;">
+                            <button class="action-btn" style="padding: 4px 8px; font-size: 0.8rem;" onclick='copyText(this, ${safeTextJson})'>نسخ</button>
+                            <button class="delete-btn" onclick="openDeleteModal('${item.id}')">حذف</button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // --- نظام نافذة تأكيد الحذف ---
+        const deleteModal = document.getElementById('deleteModal');
+        const confirmDeleteBtn = document.getElementById('confirmDeleteBtn');
+        const cancelDeleteBtn = document.getElementById('cancelDeleteBtn');
+
+        function openDeleteModal(id) {
+            itemToDeleteId = id;
+            deleteModal.style.display = 'flex';
+        }
+
+        cancelDeleteBtn.addEventListener('click', () => {
+            deleteModal.style.display = 'none';
+            itemToDeleteId = null;
+        });
+
+        confirmDeleteBtn.addEventListener('click', () => {
+            if (itemToDeleteId !== null) {
+                savedItems = savedItems.filter(s => s.id !== itemToDeleteId);
+                localStorage.setItem('nibra_saved', JSON.stringify(savedItems));
+                renderContent(document.getElementById('searchInput').value);
+                renderSavedDrawer();
             }
+            deleteModal.style.display = 'none';
+            itemToDeleteId = null;
+        });
 
-            gameSpeed += 0.00008;
-        }
+        // حقل البحث الذكي مع التوليد الفوري
+        const searchInput = document.getElementById('searchInput');
+        searchInput.addEventListener('input', (e) => {
+            let val = e.target.value;
+            if (val.length > 50) val = val.substring(0, 50);
+            renderContent(val);
+        });
 
-        function checkCollision(player, obs) {
-            const pBox = new THREE.Box3().setFromObject(player);
-            pBox.min.x += 0.2; pBox.max.x -= 0.2;
-            const oBox = new THREE.Box3().setFromObject(obs);
-            return pBox.intersectsBox(oBox);
-        }
-
-        function checkCoinCollect(player, coin) {
-            const p = player.position, c = coin.position;
-            return Math.abs(p.x - c.x) < 0.9 && Math.abs(p.z - c.z) < 0.9 && Math.abs(p.y - c.y) < 1.5;
-        }
-
-        function triggerGameOver() {
-            isGameOver = true;
-            document.getElementById('final-score').innerText = Math.floor(score / 5);
-            document.getElementById('final-coins').innerText = collectedCoins;
-            document.getElementById('game-over-screen').classList.add('active');
-        }
-
-        function restartGame() {
-            [...obstacles, ...coins, ...scenery].forEach(item => scene.remove(item));
-            obstacles = []; coins = []; scenery = [];
-            score = 0; collectedCoins = 0; gameSpeed = 0.8; currentLane = 1;
-            targetX = lanes[currentLane]; isJumping = false;
-
-            playerGroup.position.set(lanes[currentLane], 0, 0);
-            document.getElementById('current-score').innerText = 0;
-            document.getElementById('coins-count').innerText = 0;
-            document.getElementById('game-over-screen').classList.remove('active');
-
-            isGameOver = false;
-            animate();
-        }
-
-        function onWindowResize() {
-            camera.aspect = window.innerWidth / window.innerHeight;
-            camera.updateProjectionMatrix();
-            renderer.setSize(window.innerWidth, window.innerHeight);
-        }
-
-        function animate() {
-            if (isGameOver) return;
-            requestAnimationFrame(animate);
-
-            updatePlayer();
-            updateWorld();
-
-            score++;
-            document.getElementById('current-score').innerText = Math.floor(score / 5);
-
-            renderer.render(scene, camera);
-        }
-
-        init();
+        // التشغيل الأولي
+        renderContent();
     </script>
 </body>
-</html>
+    </html>
+    
