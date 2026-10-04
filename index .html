@@ -342,14 +342,12 @@
 
     <script>
         const defaultItems = [
-            { id: 'd1', text: "【 جُوكَر 】 ♜" },
-            { id: 'd2', text: "★彡 الأسطورة 彡★ ⚡" },
-            { id: 'd3', text: "꧁༺ مُحارب ༻꧂ ⚔️" },
-            { id: 'd4', text: "♔ كبرياء هادئ ♔" },
-            { id: 'd5', text: "【 🎮 】 Gaming Legend" },
-            { id: 'd6', text: " 𓆩 صمتي 𓆪 🖤" },
-            { id: 'd7', text: "🦋 ツ ملك الألعاب ツ 🦋" },
-            { id: 'd8', text: "【 ♔ 】 صقر العرب ♘" }
+            { id: 'd1', text: "꧁ঔৣ۝ نِبرا ۝ৣঔ꧂" },
+            { id: 'd2', text: "༒☬ VIVORA ☬༒" },
+            { id: 'd3', text: "亗 『 الجوكر 』 亗" },
+            { id: 'd4', text: "◥☠️💥 KILLER 💥☠️◤" },
+            { id: 'd5', text: "⚔️ أسطورة الألعاب ⚔️" },
+            { id: 'd6', text: "𓆩⚡️ ملك السرعة ⚡️𓆪" }
         ];
 
         let savedItems = JSON.parse(localStorage.getItem('nibra_saved')) || [];
@@ -373,24 +371,80 @@
                 displayList = defaultItems;
             } else {
                 sectionTitle.innerText = `نتائج وتوليد زخارف لـ: "${escapeHTML(cleanQuery)}"`;
-                // قائمة ضخمة وشاملة تضم كافة الزخارف والرموز التي اخترتها
-                displayList = [
-                    { id: 'gen_1', text: `【 ${cleanQuery} 】 ♜` },
-                    { id: 'gen_2', text: `★彡 ${cleanQuery} 彡★ ⚡` },
-                    { id: 'gen_3', text: `꧁༺ ${cleanQuery} ༻꧂` },
-                    { id: 'gen_4', text: `♔ ${cleanQuery} ♔` },
-                    { id: 'gen_5', text: `🦋 ツ ${cleanQuery} ツ 🦋` },
-                    { id: 'gen_6', text: `𓆩 ${cleanQuery} 𓆪 🖤` },
-                    { id: 'gen_7', text: `【 ⚝ 】 ${cleanQuery}` },
-                    { id: 'gen_8', text: `☩ ${cleanQuery} ☩ 🌊` },
-                    { id: 'gen_9', text: `【 ♘ 】 ${cleanQuery} ♕` },
-                    { id: 'gen_10', text: `✨ 𓆩 ${cleanQuery} 𓆪 ✨` },
-                    { id: 'gen_11', text: `【 ♚ 】 ${cleanQuery} ♝` },
-                    { id: 'gen_12', text: `(っ◔◡◔)っ ${cleanQuery}` },
-                    { id: 'gen_13', text: `【 🌸 】 ${cleanQuery} 🀄` },
-                    { id: 'gen_14', text: `✦ ${cleanQuery} ✦ ☠️` },
-                    { id: 'gen_15', text: `【 ⚡ 】 ${cleanQuery} ♜` }
+                // قائمة شاملة تضم كافة الزخارف التي أرسلتها في الدفعتين دون أي نقص
+                const rawTemplates = [
+                    "꧁ঔৣ۝ [NAME] ۝ৣঔ꧂",
+                    "༒☬ [NAME] ☬༒",
+                    "亗 『 [NAME] 』 亗",
+                    "◥☠️💥 [NAME] 💥☠️️◤",
+                    "⚔️ [NAME] ⚔️",
+                    "⦳ ⚡ [NAME] ⚡ ⦳",
+                    "𖤍 [NAME] 𖤍",
+                    "♛ [NAME] ♛",
+                    "ᕦ[NAME]ᕤ",
+                    "⚡️[NAME]⚡️",
+                    "✿ [NAME] ✿",
+                    "☾ [NAME] ☽",
+                    "☆彡 [NAME] 彡☆",
+                    "❥ [NAME] ❥",
+                    "💎 [NAME] 💎",
+                    "⚜️ [NAME] ⚜️",
+                    "👑 [NAME] 👑",
+                    "〆[NAME]〆",
+                    "ツ [NAME]",
+                    "↱ [NAME] ↰",
+                    "◥ ツ [NAME] ツ ◤",
+                    "⫷ [NAME] ⫸",
+                    "⧼ [NAME] ⧽",
+                    "𓆩 [NAME] 𓆪",
+                    "𓋼 [NAME] 𓋼",
+                    "⚚ [NAME] ⚚",
+                    "ꗄ [NAME] ꗄ",
+                    "❖ [NAME] ❖",
+                    "⌁ [NAME] ⌁",
+                    "❃ [NAME] ❃",
+                    "彡[NAME]彡",
+                    "⁝⁞⁝⁞ [NAME] ⁝⁞⁝⁞",
+                    "◤[NAME]◥",
+                    "╰☠️╮ [NAME] ╭☠️╯",
+                    "╳ [NAME] ╳",
+                    "⌖ [NAME] ⌖",
+                    "⪻ [NAME] ⪼",
+                    "◤☠️️ [NAME] ☠️◥",
+                    "⚔️『[NAME]』⚔️",
+                    "𓆩⚡️[NAME]⚡️𓆪",
+                    "⫷★ [NAME] ★⫸",
+                    "亗 [NAME] 亗",
+                    "ꕥ [NAME] ꕥ",
+                    "🫧 [NAME] 🫧",
+                    "☁️ [NAME] ☁️",
+                    "𓍼 [NAME] 𓍼",
+                    "𓏲 [NAME] 𓏲",
+                    "♡ [NAME] ♡",
+                    "☾『[NAME]』☽",
+                    "⚓︎ [NAME] ⚓︎",
+                    "⧼💎[NAME]💎⧽",
+                    "༺[NAME]༻",
+                    "𓆩♡𓆪 [NAME] 𓆩♡𓆪",
+                    "𓆩☠️️ [NAME] ☠️𓆪",
+                    "༺ [NAME] ༻",
+                    "╰⚔️╮ [NAME] ╭⚔️╯",
+                    "◥▓ [NAME] ▓◤",
+                    "⚔️ 𓆩 [NAME] 𓆪 ⚔️",
+                    "⁜ [NAME] ⁜",
+                    "〆『[NAME]』〆",
+                    "𖦹 [NAME] 𖦹",
+                    "⪧ [NAME] ⪧",
+                    "◥💥 [NAME] 💥◤",
+                    "💎『[NAME]』💎",
+                    "👑 『[NAME]』 👑",
+                    "☆ [NAME] ☆"
                 ];
+
+                displayList = rawTemplates.map((tpl, index) => ({
+                    id: 'gen_' + index,
+                    text: tpl.replace(/\[NAME\]/g, cleanQuery)
+                }));
             }
 
             itemsGrid.innerHTML = displayList.map(item => {
@@ -485,12 +539,6 @@
             deleteModal.style.display = 'flex';
         }
 
-        cancelDeleteBtn.addEventListener('click', () => {
-            deleteModal.style.display, (deleteModal.style.display = 'none');
-            itemToDeleteId = null;
-        });
-
-        // تصحيح إغلاق النافذة المنبثقة للأمان
         cancelDeleteBtn.onclick = () => {
             deleteModal.style.display = 'none';
             itemToDeleteId = null;
