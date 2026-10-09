@@ -292,6 +292,22 @@
             font-size: 0.9rem;
             border-top: 1px solid var(--border);
             background-color: var(--card-bg);
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .footer-link {
+            color: var(--accent);
+            text-decoration: none;
+            font-weight: 600;
+            transition: opacity 0.2s;
+        }
+
+        .footer-link:hover {
+            opacity: 0.8;
+            text-decoration: underline;
         }
 
         .no-results {
@@ -337,7 +353,8 @@
     </div>
 
     <footer>
-        جميع الحقوق محفوظة © نِبرا 2026
+        <div>جميع الحقوق محفوظة © نِبرا 2026</div>
+        <a href="https://www.instagram.com/9860050jvjchccbxaz?xtok=MXhzMXh3cXVodzVtOQ==" target="_blank" class="footer-link">تابعني على إنستغرام 📸</a>
     </footer>
 
     <script>
@@ -371,12 +388,11 @@
                 displayList = defaultItems;
             } else {
                 sectionTitle.innerText = `نتائج وتوليد زخارف لـ: "${escapeHTML(cleanQuery)}"`;
-                // قائمة شاملة تضم كافة الزخارف التي أرسلتها في الدفعتين دون أي نقص
                 const rawTemplates = [
                     "꧁ঔৣ۝ [NAME] ۝ৣঔ꧂",
                     "༒☬ [NAME] ☬༒",
                     "亗 『 [NAME] 』 亗",
-                    "◥☠️💥 [NAME] 💥☠️️◤",
+                    "◥☠️💥 [NAME] 💥☠️◤",
                     "⚔️ [NAME] ⚔️",
                     "⦳ ⚡ [NAME] ⚡ ⦳",
                     "𖤍 [NAME] 𖤍",
@@ -410,7 +426,7 @@
                     "╳ [NAME] ╳",
                     "⌖ [NAME] ⌖",
                     "⪻ [NAME] ⪼",
-                    "◤☠️️ [NAME] ☠️◥",
+                    "◤☠️ [NAME] ☠️◥",
                     "⚔️『[NAME]』⚔️",
                     "𓆩⚡️[NAME]⚡️𓆪",
                     "⫷★ [NAME] ★⫸",
@@ -426,7 +442,7 @@
                     "⧼💎[NAME]💎⧽",
                     "༺[NAME]༻",
                     "𓆩♡𓆪 [NAME] 𓆩♡𓆪",
-                    "𓆩☠️️ [NAME] ☠️𓆪",
+                    "𓆩☠️ [NAME] ☠️𓆪",
                     "༺ [NAME] ༻",
                     "╰⚔️╮ [NAME] ╭⚔️╯",
                     "◥▓ [NAME] ▓◤",
@@ -443,7 +459,7 @@
 
                 displayList = rawTemplates.map((tpl, index) => ({
                     id: 'gen_' + index,
-                    text: tpl.replace(/\[NAME\]/g, cleanQuery)
+                    text: tpl.replace(/[NAME]/g, cleanQuery)
                 }));
             }
 
