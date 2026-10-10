@@ -459,7 +459,7 @@
 
                 displayList = rawTemplates.map((tpl, index) => ({
                     id: 'gen_' + index,
-                    text: tpl.replace(/[NAME]/g, cleanQuery)
+                    text: tpl.replace('[NAME]', cleanQuery)
                 }));
             }
 
